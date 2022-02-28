@@ -5,18 +5,19 @@ import { useState } from 'react';
 
 
 function App() {
+  const [todoName, setTodoName] = useState('');
   const [todoList, setTodoList] = useState([
     {
       id: 1,
       text: 'Groceries',
       tasks: [
         {
-          id: 1,
-          text: 'buy fruit',
+          taskid: 1,
+          name: 'buy fruit',
         },
         {
-          id: 2,
-          text: 'need meet',
+          taskid: 2,
+          name: 'need meet',
         }
       ]
     },
@@ -25,70 +26,130 @@ function App() {
       text: 'Projects',
       tasks: [
         {
-          id: 1,
-          text: 'Create hanlders',
+          taskid: 1,
+          name: 'Create hanlders',
         },
         {
-          id: 2,
-          text: 'Create CSS styles',
+          taskid: 2,
+          name: 'Create CSS styles',
         }
       ]
     }
   ]);
   //controllers for the Todo Form
-  const [listName, setListName] = useState();
 
-  const addList = (list) => {
-    const id = Math.floor(Math.random() * 10000) + 1
-
-    const newList = { id, text: list, tasks: [] }
-    console.log(newList);
-    setTodoList([...todoList, newList])
-
-  }
-
-  const deleteTask = (id) => {
-    console.log('delete task item=', id);
-  }
-
+  //console.log(todoList);
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!listName) {
+    if (!todoName) {
       alert('Please enter a Name for the list.')
       return;
     }
-    addList(listName)
+    addList(todoName)
+    setTodoName('');
+  }
 
+  const addList = (list) => {
+    const id = Math.floor(Math.random() * 10000) + 1;
+    const newList = { id, text: list, tasks: [] }
+    setTodoList([...todoList, newList]);
+  }
+
+  const deleteTodo = (id) => {
+    console.log('delete todo=' + id)
+    const newTodos = todoList.filter(todo => todo.id !== id);
+    setTodoList(newTodos);
+  }
+
+
+  const updateTask = (todoId, taksName) => {
+    const id = Math.floor(Math.random() * 10000) + 1;
+    const newTask = { taskid: id, name: taksName }
+
+    // const newtodos = todoList.map(todo => {
+    //   let tasks = todo.tasks; //
+    //   if (todo.id === todoId) {
+    //     tasks.push(newTask) // add the new task 
+    //     return todo;
+    //   }
+    //   return todo;
+    // })
+
+    const newTodos = todoList.map(todo => {
+      if (todo.id === todoId) {
+        //spread todo, and on the current  todo tasks add newTask
+        return { ...todo, tasks: [...todo.tasks, newTask] }
+      }
+      return todo;
+    })
+    setTodoList(newTodos)
+  }
+
+  const deleteTask = (todoId, taskId) => {
+
+    const updateTodos = todoList.map(todo => {
+      if (todo.id === todoId) {
+        // spread todos, the todo.tasks will be filterd, when task has tasksid diff than task clicked
+        return { ...todo, tasks: (todo.tasks.filter(task => task.taskid !== taskId)) }
+      }
+      return todo;
+    })
+    //const todos = todoList.filter((todo) => !todo.id)
+    setTodoList(updateTodos)
   }
 
   return (
-    <div className="App">
-      <h1>ToDo Lists</h1>
-      <div>
-        <h1>Add List</h1>
-        <form onSubmit={onSubmit}>
-          <input type="text" onChange={(e) => setListName(e.target.value)} value={listName} />
-          <button type="submit" className='btn' >Create List</button>
-        </form>
+    <BrowserRouter>
+      <div >
+        <nav className="navbar navbar-light mb-3" style={{ 'background': '#e3f2fd' }}>
+          <div className="container-fluid">
+            <a className="navbar-brand h1" href="/">ToDo's Tracker</a>
+          </div>
+        </nav>
+        <div className="container-md align-items-center">
+          <h2 className="lead">Add List</h2>
+          <form onSubmit={onSubmit} className="row g-3">
+            <div className="col-4 mb-3">
+              <input className="form-control" type="text" id="todoName" placeholder="Todo Name" onChange={(e) => setTodoName(e.target.value)} value={todoName} />
+            </div>
+            <div className="col-auto">
+              <button type="submit" className="btn btn-primary mb-3"> <i className="fa-solid fa-circle-plus"></i> Add </button>
+            </div>
+          </form>
+        </div>
 
-      </div>
-      <BrowserRouter>
-        <ul>
-          <li key='0'><Link to={`/`} >Home </Link></li>
-          {todoList.map((taskList) => (
-            <li key={taskList.id}><Link to={`/todolist-${taskList.id}`} >{taskList.text} </Link></li>
-          ))}
-        </ul>
+        <div className='container-md'>
+          <div className="row row-cols-5 pt-5">
+            {todoList.map((todos) => (
+              <div key={todos.id} className="col p-2">
+                <div className="card border-dark">
+                  <div className="card-header text-white bg-primary mb-3">
+                    <Link to={`/todolist-${todos.id}`} >{todos.text} </Link>
+                  </div>
+                  <div className="card-body">
+                    <span>
+                      <i className="fa-solid fa-pen-to-square"></i> <i className="fa-solid fa-trash" onClick={() => deleteTodo(todos.id)}></i>
+                    </span>
+
+
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          </div>
+        </div>
         <Routes>
-          <Route key="0" exact path="/" />
-          {todoList.map((taskList) => (
-            <Route key={taskList.id} path={`/todolist-${taskList.id}`} element={
-              <TodoList name={taskList.text} tasks={taskList.tasks} onDelete={deleteTask} />
+          <Route key="0" exact path="/" element={<nav></nav>} />
+          {todoList.map((todos) => (
+            <Route key={todos.id} path={`/todolist-${todos.id}`} element={
+              <TodoList id={todos.id} name={todos.text} tasks={todos.tasks} onDelete={deleteTask} updateTask={updateTask} />
             } />
           ))}
         </Routes>
-      </BrowserRouter>
-    </div >
+
+      </div >
+    </BrowserRouter>
   );
 }
 
