@@ -1,7 +1,9 @@
 import './App.css';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom'
 import TodoList from './components/TodoList';
 import { useState } from 'react';
+import Modal from './components/Modal/Modal';
+
 
 
 function App() {
@@ -14,10 +16,12 @@ function App() {
         {
           taskid: 1,
           name: 'buy fruit',
+          complete: true
         },
         {
           taskid: 2,
           name: 'need meet',
+          complete: true
         }
       ]
     },
@@ -28,10 +32,12 @@ function App() {
         {
           taskid: 1,
           name: 'Create hanlders',
+          complete: false
         },
         {
           taskid: 2,
           name: 'Create CSS styles',
+          complete: false
         }
       ]
     }
@@ -65,16 +71,6 @@ function App() {
   const updateTask = (todoId, taksName) => {
     const id = Math.floor(Math.random() * 10000) + 1;
     const newTask = { taskid: id, name: taksName }
-
-    // const newtodos = todoList.map(todo => {
-    //   let tasks = todo.tasks; //
-    //   if (todo.id === todoId) {
-    //     tasks.push(newTask) // add the new task 
-    //     return todo;
-    //   }
-    //   return todo;
-    // })
-
     const newTodos = todoList.map(todo => {
       if (todo.id === todoId) {
         //spread todo, and on the current  todo tasks add newTask
@@ -82,9 +78,29 @@ function App() {
       }
       return todo;
     })
+
     setTodoList(newTodos)
   }
 
+
+  const onComplete = (todoId, taskId) => {
+    //console.log('completed')
+    const newTodos = todoList.map(todo => {
+      if (todo.id === todoId) {
+        const newtasks = todo.tasks.map(task => {
+          if (task.taskid === taskId) {
+            return { ...task, complete: !task.complete }
+          }
+          return task
+        })
+        //console.log(newtasks);
+        return { ...todo, tasks: newtasks }
+      }
+      return todo;
+    })
+    console.log(newTodos);
+    setTodoList(newTodos)
+  }
   const deleteTask = (todoId, taskId) => {
 
     const updateTodos = todoList.map(todo => {
@@ -100,16 +116,15 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div >
+      <section>
         <nav className="navbar navbar-light mb-3" style={{ 'background': '#e3f2fd' }}>
           <div className="container-fluid">
-            <a className="navbar-brand h1" href="/">ToDo's Tracker</a>
+            <Link className="navbar-brand h1" to="/">ToDo's Tracker</Link>
           </div>
         </nav>
-        <div className="container-md align-items-center">
-          <h2 className="lead">Add List</h2>
-          <form onSubmit={onSubmit} className="row g-3">
-            <div className="col-4 mb-3">
+        <div className="container-lg align-items-center w-100 pt-5">
+          <form onSubmit={onSubmit} className="row">
+            <div className="col-6 mb-3">
               <input className="form-control" type="text" id="todoName" placeholder="Todo Name" onChange={(e) => setTodoName(e.target.value)} value={todoName} />
             </div>
             <div className="col-auto">
@@ -117,39 +132,43 @@ function App() {
             </div>
           </form>
         </div>
-
         <div className='container-md'>
           <div className="row row-cols-5 pt-5">
             {todoList.map((todos) => (
               <div key={todos.id} className="col p-2">
                 <div className="card border-dark">
-                  <div className="card-header text-white bg-primary mb-3">
+                  <div className="card-header text-white bg-dark bg-gradient mb-3">
                     <Link to={`/todolist-${todos.id}`} >{todos.text} </Link>
                   </div>
                   <div className="card-body">
                     <span>
                       <i className="fa-solid fa-pen-to-square"></i> <i className="fa-solid fa-trash" onClick={() => deleteTodo(todos.id)}></i>
                     </span>
-
-
                   </div>
                 </div>
               </div>
             ))}
-
           </div>
         </div>
         <Routes>
           <Route key="0" exact path="/" element={<nav></nav>} />
           {todoList.map((todos) => (
             <Route key={todos.id} path={`/todolist-${todos.id}`} element={
-              <TodoList id={todos.id} name={todos.text} tasks={todos.tasks} onDelete={deleteTask} updateTask={updateTask} />
+              <TodoList id={todos.id}
+                name={todos.text}
+                tasks={todos.tasks}
+                onDelete={deleteTask}
+                updateTask={updateTask}
+                onComplete={onComplete}
+              />
             } />
           ))}
+          <Route key="0" path="*" element={<Navigate to="/" />} />
         </Routes>
-
-      </div >
+        <Modal />
+      </section>
     </BrowserRouter>
+
   );
 }
 

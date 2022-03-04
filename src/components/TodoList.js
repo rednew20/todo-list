@@ -2,7 +2,8 @@ import React from 'react'
 import Task from './Task'
 import { useState } from 'react';
 
-const TodoList = ({ id, name, tasks, onDelete, updateTask }) => {
+
+const TodoList = ({ id, name, tasks, onDelete, updateTask, onComplete }) => {
   const [newTask, setNewTask] = useState('');
   //const [taskList, setTaskList] = useState(tasks)
 
@@ -20,21 +21,20 @@ const TodoList = ({ id, name, tasks, onDelete, updateTask }) => {
   }
 
   return (
-    <div className="container">
-      <div>
-        <div className="">
-          <h1>Add Task to {name} </h1>
-          <form onSubmit={onSubmit} className="row g-3">
-            <div className="col-4 mb-3">
-              <input type="text" className="form-control" name="taskName" onChange={(e) => setNewTask(e.target.value)} value={newTask} />
-            </div>
-            <div className="col-4 mb-3">
-              <button type="submit" className='btn btn-primary' >Create Task</button>
-            </div>
-          </form>
-        </div>
+    <div className="glass container-md mb-5 p-3 w-75">
+      <div className="">
+        <span className="Lead">Add Task to <b>{name}</b> </span>
+        <form onSubmit={onSubmit} className="row align-content-center">
+          <div className="col-6 mb-3">
+            <input type="text" className="form-control" name="taskName" onChange={(e) => setNewTask(e.target.value)} value={newTask} />
+          </div>
+          <div className="col-6 mb-3">
+            <button type="submit" className='btn btn-primary' >Create Task</button>
+          </div>
+        </form>
       </div>
-      <Task className="container" todoId={id} tasks={tasks} onDelete={onDelete} />
+      <Task className="container" todoId={id} tasks={tasks} onDelete={onDelete} onComplete={onComplete} />
+
     </div>
   )
 }
