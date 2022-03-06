@@ -4,10 +4,9 @@ import TodoList from './components/TodoList';
 import { useState } from 'react';
 import Modal from './components/Modal/Modal';
 
-
-
 function App() {
   const [todoName, setTodoName] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
   const [todoList, setTodoList] = useState([
     {
       id: 1,
@@ -42,33 +41,43 @@ function App() {
       ]
     }
   ]);
-  //controllers for the Todo Form
 
-  //console.log(todoList);
-  const onSubmit = (e) => {
+  /* TODO functions*/
+  const onSubmitTodo = (e) => {
     e.preventDefault();
     if (!todoName) {
       alert('Please enter a Name for the list.')
       return;
     }
-    addList(todoName)
+    addTodoList(todoName)
     setTodoName('');
   }
 
-  const addList = (list) => {
+  const addTodoList = (list) => {
     const id = Math.floor(Math.random() * 10000) + 1;
     const newList = { id, text: list, tasks: [] }
     setTodoList([...todoList, newList]);
   }
 
-  const deleteTodo = (id) => {
-    console.log('delete todo=' + id)
+  const deleteTodoList = (id) => {
+    //console.log('delete todo=' + id)
     const newTodos = todoList.filter(todo => todo.id !== id);
     setTodoList(newTodos);
   }
 
+  const editTodo = (todoid, todoName) => {
+    const newTodos = todoList.map(todo => {
+      if (todo.id === todoid) {
+        return { ...todo, text: todoName }
+      }
+      return todo;
 
-  const updateTask = (todoId, taksName) => {
+    })
+    console.log(newTodos)
+    setTodoList(newTodos)
+  }
+  /* Tasks functions*/
+  const addTask = (todoId, taksName) => {
     const id = Math.floor(Math.random() * 10000) + 1;
     const newTask = { taskid: id, name: taksName }
     const newTodos = todoList.map(todo => {
@@ -81,10 +90,21 @@ function App() {
 
     setTodoList(newTodos)
   }
+  const editTask = (todoid, todoName) => {
+    const newTodos = todoList.map(todo => {
+      if (todo.id === todoid) {
+        return { ...todo, text: todoName }
+      }
+      return todo;
+
+    })
+    console.log(newTodos)
+    //setTodoList(newTodos)
+  }
 
 
-  const onComplete = (todoId, taskId) => {
-    //console.log('completed')
+  const onCompleteTask = (todoId, taskId) => {  // Toggle Complete task
+    console.log('completed')
     const newTodos = todoList.map(todo => {
       if (todo.id === todoId) {
         const newtasks = todo.tasks.map(task => {
@@ -93,7 +113,6 @@ function App() {
           }
           return task
         })
-        //console.log(newtasks);
         return { ...todo, tasks: newtasks }
       }
       return todo;
@@ -101,8 +120,7 @@ function App() {
     console.log(newTodos);
     setTodoList(newTodos)
   }
-  const deleteTask = (todoId, taskId) => {
-
+  const onDeleteTask = (todoId, taskId) => {
     const updateTodos = todoList.map(todo => {
       if (todo.id === todoId) {
         // spread todos, the todo.tasks will be filterd, when task has tasksid diff than task clicked
@@ -123,7 +141,7 @@ function App() {
           </div>
         </nav>
         <div className="container-lg align-items-center w-100 pt-5">
-          <form onSubmit={onSubmit} className="row">
+          <form onSubmit={onSubmitTodo} className="row">
             <div className="col-6 mb-3">
               <input className="form-control" type="text" id="todoName" placeholder="Todo Name" onChange={(e) => setTodoName(e.target.value)} value={todoName} />
             </div>
@@ -132,7 +150,7 @@ function App() {
             </div>
           </form>
         </div>
-        <div className='container-md'>
+        <div className='container-md w-75'>
           <div className="row row-cols-5 pt-5">
             {todoList.map((todos) => (
               <div key={todos.id} className="col p-2">
@@ -142,10 +160,11 @@ function App() {
                   </div>
                   <div className="card-body">
                     <span>
-                      <i className="fa-solid fa-pen-to-square"></i> <i className="fa-solid fa-trash" onClick={() => deleteTodo(todos.id)}></i>
+                      <i className="fa-solid fa-pen-to-square" onClick={() => setModalOpen(true)}></i> <i className="fa-solid fa-trash" onClick={() => deleteTodoList(todos.id)}></i>
                     </span>
                   </div>
                 </div>
+                <Modal type="todo" modalOpen={modalOpen} setModalOpen={setModalOpen} editTodo={editTodo} todo={todos} />
               </div>
             ))}
           </div>
@@ -157,15 +176,15 @@ function App() {
               <TodoList id={todos.id}
                 name={todos.text}
                 tasks={todos.tasks}
-                onDelete={deleteTask}
-                updateTask={updateTask}
-                onComplete={onComplete}
+                onDelete={onDeleteTask}
+                addTask={addTask}
+                onCompleteTask={onCompleteTask}
+                editTask={editTask}
               />
             } />
           ))}
           <Route key="0" path="*" element={<Navigate to="/" />} />
         </Routes>
-        <Modal />
       </section>
     </BrowserRouter>
 
