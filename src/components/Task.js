@@ -1,31 +1,37 @@
 import React, { useState } from 'react'
-import TaskForm from './TaskForm';
 
+const Task = ({ task, edit }) => {
 
-const Task = ({ todoId, tasks, onDelete, onCompleteTask, editTask }) => {
-  const [edit, setEdit] = useState(false);
+  const [newName, setNewName] = useState(task.name);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (!task.name) {
+      alert('Please enter a Name for the task.')
+      return;
+    }
+    //addTask(id, newTask)
+    //setNewTask('');
+  }
+
+  const editTemplate = (
+    <div>
+      <form onSubmit={onSubmit} className="row align-content-center">
+        <div className="col-6 mb-3">
+          <input type="text" className="form-control" name="taskName" onChange={(e) => setNewName(e.target.value)} value={newName} />
+        </div>
+        <div className="col-6 mb-3">
+          <button type="submit" className='btn btn-primary' >Update</button>
+        </div>
+      </form>
+    </div>)
+
+  const viewTemplate = (task.complete?<span style={{textDecoration:'line-through'}}>{task.name}</span>:<span>{task.name}</span>)
 
   return (
-    <div className="d-flex flex-column d-inline-flex ">
-      {tasks.map((task) => (
-        <span key={task.taskid} className=" bg-body rounded p-1 m-1 align-items-end">
-
-          <TaskForm taskname={task.name} edit={edit} />
-
-          <span className=" d-inline-block justify-content-end">
-            {task.complete ?
-              <i className="fa-solid fa-toggle-on p-2" style={{ color: 'green', cursor: 'pointer' }} onClick={(e) => onCompleteTask(todoId, task.taskid)}></i>
-              :
-              <i className="fa-solid fa-toggle-off p-2" style={{ cursor: 'pointer' }} onClick={(e) => onCompleteTask(todoId, task.taskid)}></i>
-            }
-            <i className="fa-solid fa-pen-to-square p-2" onClick={() => setEdit(true)}  ></i>
-            <i style={{ color: 'red', cursor: 'pointer' }} className="fa-solid fa-delete-left" onClick={() => onDelete(todoId, task.taskid)}></i>
-          </span>
-        </span>
-      ))
-      }
-    </div >
-
+    <span>
+      {edit ? editTemplate : viewTemplate}
+    </span>
   )
 }
 

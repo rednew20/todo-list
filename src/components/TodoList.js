@@ -1,5 +1,5 @@
 import React from 'react'
-import Task from './Task'
+import Tasks from './Tasks'
 import { useState } from 'react';
 
 
@@ -35,7 +35,7 @@ const TodoList = ({ id, name, tasks, onDelete, addTask, onCompleteTask, editTask
           </div>
         </form>
       </div>
-      <Task className="container" todoId={id} tasks={tasks} onDelete={onDelete} onCompleteTask={onCompleteTask} editTask={editTask} />
+      <Tasks className="container" todoId={id} tasks={tasks} onDelete={onDelete} onCompleteTask={onCompleteTask} editTask={editTask} />
 
     </div>
   )
