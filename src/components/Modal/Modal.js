@@ -4,10 +4,8 @@ import './Modal.css'
 const Modal = ({ type, modalOpen, setModalOpen, editTodo, todo }) => {
   const [taskName, setTaskName] = useState();
 
-  //console.log(todo)
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(taskName)
     editTodo(todo.id, taskName)
     setModalOpen(false);
   }
@@ -18,7 +16,7 @@ const Modal = ({ type, modalOpen, setModalOpen, editTodo, todo }) => {
         <div className="wrapper">
           <div className="modal-container">
             <div className="closeButton">
-              <i className="fa-solid fa-rectangle-xmark" onClick={() => setModalOpen(false)}></i>
+              <button className="btn btn-close" onClick={() => setModalOpen(false)}></button>
             </div>
             <form className="modal-form" onSubmit={(e) => handleSubmit(e)}>
               <h1 className="formTitle">Edit {type === 'todo' ? 'ToDo' : 'Task'}</h1>

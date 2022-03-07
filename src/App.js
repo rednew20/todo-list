@@ -90,16 +90,21 @@ function App() {
 
     setTodoList(newTodos)
   }
-  const editTask = (todoid, todoName) => {
+  const editTask = (todoId, taskId, todoName) => {
     const newTodos = todoList.map(todo => {
-      if (todo.id === todoid) {
-        return { ...todo, text: todoName }
+      if (todo.id === todoId) {
+        const newtasks = todo.tasks.map(task => {
+          if (task.taskid === taskId) {
+            return { ...task, name: todoName }
+          }
+          return task
+        })
+        return { ...todo, tasks: newtasks }
       }
       return todo;
-
     })
-    console.log(newTodos)
-    //setTodoList(newTodos)
+    //console.log(newTodos)
+    setTodoList(newTodos)
   }
 
 
@@ -117,7 +122,7 @@ function App() {
       }
       return todo;
     })
-    console.log(newTodos);
+    //console.log(newTodos);
     setTodoList(newTodos)
   }
   const onDeleteTask = (todoId, taskId) => {
