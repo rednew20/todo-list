@@ -18,8 +18,6 @@ const Tasks = ({ todoId, tasks, onDelete, onCompleteTask, editTask }) => {
       taskName: taskName
     })
 
-    console.log('task=' + taskId)
-    console.log('todo=' + todoId)
   }
 
   const onEdit = (taskId, taskName) => {
@@ -46,7 +44,7 @@ const Tasks = ({ todoId, tasks, onDelete, onCompleteTask, editTask }) => {
               <i className="fa-solid fa-toggle-off p-2" style={{ cursor: 'pointer' }} onClick={(e) => onCompleteTask(todoId, task.taskid)}></i>
             }
             {task.complete ?
-              <i className="fa-solid fa-pen-to-square p-2"   ></i>
+              <i className="fa-solid fa-pen-to-square p-2" ></i>
               : <i className="fa-solid fa-pen-to-square p-2" onClick={() => handleEdit(task.taskid, task.name)}  ></i>}
 
             <i style={{ color: 'red', cursor: 'pointer' }} className="fa-solid fa-delete-left" onClick={() => onDelete(todoId, task.taskid)}></i>

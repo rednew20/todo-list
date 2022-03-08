@@ -38,7 +38,6 @@ const Task = ({ todoId, task, edit, onEdit }) => {
     </div>)
 
   const viewTemplate = (task.complete ? <span style={{ textDecoration: 'line-through' }}>{task.name}</span> : <span>{task.name}</span>)
-  //console.log(edit)
 
   return (
     <span>
